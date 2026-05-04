@@ -47,14 +47,18 @@ function init() {
 }
 
 // ── Tabs ──────────────────────────────────────────────
+function switchTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tabName}"]`)?.classList.add('active');
+  document.querySelector(`.bnav-btn[data-tab="${tabName}"]`)?.classList.add('active');
+  document.getElementById('tab-' + tabName).classList.add('active');
+}
+
 function setupTabs() {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-    });
+  document.querySelectorAll('.tab, .bnav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 }
 
@@ -166,11 +170,7 @@ btnConfirm.addEventListener('click', () => {
   renderOrderStatus();
   showBanner('✅ Pedido confirmado · 🕐 Tus bebidas estarán listas en 6 minutos');
 
-  // Switch to status tab
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.querySelector('[data-tab="estado"]').classList.add('active');
-  document.getElementById('tab-estado').classList.add('active');
+  switchTab('estado');
 });
 
 // ── Order status ──────────────────────────────────────
