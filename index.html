@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEON BAR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">NEON<span>BAR</span></div>
+    <div class="cart-summary" id="cartSummary">
+      <span id="cartCount">0</span> en carrito &bull; <span id="cartTotal">0.00</span> €
+      <span class="spent-label">· Gastado: <span id="spentDisplay">0.00</span> €</span>
+    </div>
+  </header>
+
+  <!-- Main tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="menu">Carta</button>
+    <button class="tab" data-tab="pedido">Mi Pedido</button>
+    <button class="tab" data-tab="estado">Estado</button>
+    <button class="tab" data-tab="dj">DJ</button>
+  </nav>
+
+  <!-- TAB: Carta -->
+  <section class="tab-content active" id="tab-menu">
+    <h2 class="section-title">Elige tu bebida</h2>
+    <div class="drink-grid" id="drinkGrid"></div>
+  </section>
+
+  <!-- TAB: Mi Pedido -->
+  <section class="tab-content" id="tab-pedido">
+    <h2 class="section-title">Tu pedido</h2>
+    <div id="cartItems" class="cart-list"></div>
+  </section>
+
+  <!-- TAB: Estado -->
+  <section class="tab-content" id="tab-estado">
+    <h2 class="section-title">Estado de tu bebida</h2>
+    <div id="orderStatus" class="status-container">
+      <p class="hint">Aún no has confirmado ningún pedido.</p>
+    </div>
+  </section>
+
+  <!-- TAB: DJ -->
+  <section class="tab-content" id="tab-dj">
+    <h2 class="section-title">Zona DJ</h2>
+    <div class="dj-zone">
+      <!-- Request song -->
+      <div class="dj-card" id="djRequestCard">
+        <div class="dj-icon">🎵</div>
+        <h3>Pedir una canción</h3>
+        <p>Disponible al gastar <span class="neon-num">20 €</span></p>
+        <div class="dj-progress-bar">
+          <div class="dj-progress-fill" id="progressRequest"></div>
+        </div>
+        <span class="dj-progress-label" id="labelRequest">0 / 20 €</span>
+        <button class="btn-neon locked" id="btnRequest" disabled>Bloqueado</button>
+      </div>
+
+      <!-- Dedication -->
+      <div class="dj-card" id="djDediCard">
+        <div class="dj-icon">💜</div>
+        <h3>Dedicar una canción</h3>
+        <p>Disponible al gastar <span class="neon-num">50 €</span></p>
+        <div class="dj-progress-bar">
+          <div class="dj-progress-fill" id="progressDedi"></div>
+        </div>
+        <span class="dj-progress-label" id="labelDedi">0 / 50 €</span>
+        <button class="btn-neon locked" id="btnDedi" disabled>Bloqueado</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal: Pedir canción -->
+  <div class="modal-overlay" id="modalRequest">
+    <div class="modal">
+      <h3>🎵 Pide una canción</h3>
+      <input class="neon-input" id="inputSong" type="text" placeholder="Nombre de la canción..." />
+      <div class="modal-actions">
+        <button class="btn-neon" id="btnSendRequest">Enviar</button>
+        <button class="btn-ghost" onclick="closeModal('modalRequest')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Dedicatoria -->
+  <div class="modal-overlay" id="modalDedi">
+    <div class="modal">
+      <h3>💜 Dedicar una canción</h3>
+      <input class="neon-input" id="inputDediSong" type="text" placeholder="Canción..." />
+      <input class="neon-input" id="inputDediFrom" type="text" placeholder="De: tu nombre..." />
+      <input class="neon-input" id="inputDediTo" type="text" placeholder="Para: nombre del destinatario..." />
+      <textarea class="neon-input" id="inputDediMsg" placeholder="Mensaje (opcional)..." rows="3"></textarea>
+      <div class="modal-actions">
+        <button class="btn-neon" id="btnSendDedi">Enviar dedicatoria</button>
+        <button class="btn-ghost" onclick="closeModal('modalDedi')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart footer: always visible -->
+  <div class="cart-footer" id="cartFooter">
+    <div class="total-box">Total carrito: <span id="totalDisplay">0.00 €</span></div>
+    <button class="btn-neon" id="btnConfirm">Confirmar pedido</button>
+  </div>
+
+  <!-- Banner (aviso grande) -->
+  <div class="banner" id="banner"></div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
