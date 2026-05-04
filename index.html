@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SoundLink</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
   <!-- Header -->
@@ -16,11 +14,40 @@
       <span class="logo-dot"></span>
       Sound<span class="logo-accent">Link</span>
     </div>
-    <div class="cart-summary" id="cartSummary">
-      <span id="cartCount">0</span> en carrito &bull; <span id="cartTotal">0.00</span> €
-      <br><span class="spent-label">Gastado: <span id="spentDisplay">0.00</span> €</span>
+    <div class="header-right">
+      <div class="cart-chip" id="cartChip">
+        <span class="cart-chip-icon">🛒</span>
+        <span id="cartCount">0</span>
+        <span class="cart-chip-sep">·</span>
+        <span id="cartTotal">0.00</span> €
+      </div>
+      <div class="spent-pill">
+        <span class="spent-dot"></span>
+        <span id="spentDisplay">0.00</span> € gastados
+      </div>
     </div>
   </header>
+
+  <!-- Rewards strip (always visible) -->
+  <div class="rewards-strip" id="rewardsStrip">
+    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
+      <span class="rstrip-icon">🎵</span>
+      <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip1"></div></div>
+      <span class="rstrip-label">20€</span>
+    </button>
+    <div class="rstrip-divider"></div>
+    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
+      <span class="rstrip-icon">💜</span>
+      <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip2"></div></div>
+      <span class="rstrip-label">50€</span>
+    </button>
+    <div class="rstrip-divider"></div>
+    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
+      <span class="rstrip-icon">👑</span>
+      <div class="rstrip-bar"><div class="rstrip-fill gold" id="rstrip3"></div></div>
+      <span class="rstrip-label">100€</span>
+    </button>
+  </div>
 
   <!-- Main tabs (desktop) -->
   <nav class="tabs">
@@ -32,6 +59,13 @@
 
   <!-- TAB: Carta -->
   <section class="tab-content active" id="tab-menu">
+    <!-- Hero -->
+    <div class="hero">
+      <p class="hero-eyebrow">Bienvenido a</p>
+      <h1 class="hero-title">Sound<span class="hero-accent">Link</span></h1>
+      <p class="hero-sub">Pide tu bebida y gana recompensas exclusivas</p>
+      <div class="hero-divider"></div>
+    </div>
     <h2 class="section-title">Elige tu bebida</h2>
     <div class="drink-grid" id="drinkGrid"></div>
   </section>
@@ -44,65 +78,148 @@
 
   <!-- TAB: Estado -->
   <section class="tab-content" id="tab-estado">
-    <h2 class="section-title">Estado de tu bebida</h2>
+    <h2 class="section-title">Estado de tu pedido</h2>
     <div id="orderStatus" class="status-container">
-      <p class="hint">Aún no has confirmado ningún pedido.</p>
+      <div class="empty-state">
+        <div class="empty-icon">🍹</div>
+        <p class="empty-title">Sin pedidos activos</p>
+        <p class="empty-sub">Ve a la Carta y confirma tu pedido</p>
+        <button class="btn-ghost" onclick="switchTab('menu')">Ver carta</button>
+      </div>
     </div>
   </section>
 
   <!-- TAB: DJ & Rewards -->
   <section class="tab-content" id="tab-dj">
     <h2 class="section-title">DJ &amp; Rewards</h2>
-    <div class="dj-zone">
 
+    <!-- Tier overview -->
+    <div class="tier-overview">
+      <div class="tier-spent-display">
+        <span class="tier-spent-num" id="tierSpentNum">0.00</span>
+        <span class="tier-spent-label">€ gastados en total</span>
+      </div>
+      <div class="tier-track">
+        <div class="tier-node" id="tierNode1">
+          <div class="tier-node-dot"></div>
+          <span>20€</span>
+        </div>
+        <div class="tier-line"><div class="tier-line-fill" id="tierLineFill1"></div></div>
+        <div class="tier-node" id="tierNode2">
+          <div class="tier-node-dot"></div>
+          <span>50€</span>
+        </div>
+        <div class="tier-line"><div class="tier-line-fill" id="tierLineFill2"></div></div>
+        <div class="tier-node" id="tierNode3">
+          <div class="tier-node-dot"></div>
+          <span>100€</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <div class="dj-zone">
       <!-- 20€: Pedir canción -->
       <div class="dj-card" id="djRequestCard">
-        <span class="dj-icon">🎵</span>
-        <h3>Pedir una canción</h3>
-        <p>Disponible al gastar <span class="neon-num">20 €</span></p>
-        <div class="dj-progress-bar">
-          <div class="dj-progress-fill" id="progressRequest"></div>
+        <div class="dj-card-inner">
+          <div class="dj-card-left">
+            <div class="dj-tier-badge tier-bronze">TIER 1</div>
+            <span class="dj-icon-sm">🎵</span>
+            <div>
+              <h3>Pedir una canción</h3>
+              <p>El DJ toca lo que quieras</p>
+            </div>
+          </div>
+          <div class="dj-card-right">
+            <div class="dj-progress-ring" id="ringRequest">
+              <svg viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="18" class="ring-bg"/>
+                <circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill1"/>
+              </svg>
+              <span class="ring-label" id="ringLabel1">0%</span>
+            </div>
+          </div>
         </div>
-        <span class="dj-progress-label" id="labelRequest">0.00 / 20 €</span>
-        <button class="btn-neon locked" id="btnRequest" disabled>Bloqueado</button>
+        <div class="dj-card-footer">
+          <span class="dj-progress-label" id="labelRequest">0.00 / 20 €</span>
+          <button class="btn-neon locked" id="btnRequest" disabled>Bloqueado</button>
+        </div>
       </div>
 
       <!-- 50€: Dedicatoria -->
       <div class="dj-card" id="djDediCard">
-        <span class="dj-icon">💜</span>
-        <h3>Dedicar una canción</h3>
-        <p>Disponible al gastar <span class="neon-num">50 €</span></p>
-        <div class="dj-progress-bar">
-          <div class="dj-progress-fill" id="progressDedi"></div>
+        <div class="dj-card-inner">
+          <div class="dj-card-left">
+            <div class="dj-tier-badge tier-silver">TIER 2</div>
+            <span class="dj-icon-sm">💜</span>
+            <div>
+              <h3>Dedicar una canción</h3>
+              <p>Aparece en la pantalla del bar</p>
+            </div>
+          </div>
+          <div class="dj-card-right">
+            <div class="dj-progress-ring" id="ringDedi">
+              <svg viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="18" class="ring-bg"/>
+                <circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill2"/>
+              </svg>
+              <span class="ring-label" id="ringLabel2">0%</span>
+            </div>
+          </div>
         </div>
-        <span class="dj-progress-label" id="labelDedi">0.00 / 50 €</span>
-        <button class="btn-neon locked" id="btnDedi" disabled>Bloqueado</button>
+        <div class="dj-card-footer">
+          <span class="dj-progress-label" id="labelDedi">0.00 / 50 €</span>
+          <button class="btn-neon locked" id="btnDedi" disabled>Bloqueado</button>
+        </div>
       </div>
 
       <!-- 100€: Mesa VIP -->
       <div class="dj-card reward-vip" id="djVipCard">
-        <span class="dj-icon">👑</span>
-        <h3>Mesa VIP + Botella</h3>
-        <p>Reserva tu mesa VIP con botella de regalo al gastar <span class="neon-num" style="color:#ffd700">100 €</span></p>
-        <div class="dj-progress-bar">
-          <div class="dj-progress-fill gold" id="progressVip"></div>
+        <div class="vip-shimmer"></div>
+        <div class="dj-card-inner">
+          <div class="dj-card-left">
+            <div class="dj-tier-badge tier-gold">TIER 3</div>
+            <span class="dj-icon-sm">👑</span>
+            <div>
+              <h3>Mesa VIP + Botella</h3>
+              <p>Reserva exclusiva con botella</p>
+            </div>
+          </div>
+          <div class="dj-card-right">
+            <div class="dj-progress-ring gold-ring" id="ringVip">
+              <svg viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="18" class="ring-bg"/>
+                <circle cx="22" cy="22" r="18" class="ring-fill gold-fill" id="ringFill3"/>
+              </svg>
+              <span class="ring-label" id="ringLabel3">0%</span>
+            </div>
+          </div>
         </div>
-        <span class="dj-progress-label" id="labelVip">0.00 / 100 €</span>
-        <button class="btn-neon locked" id="btnVip" disabled>Bloqueado</button>
+        <div class="dj-card-footer">
+          <span class="dj-progress-label" id="labelVip">0.00 / 100 €</span>
+          <button class="btn-neon locked" id="btnVip" disabled>Bloqueado</button>
+        </div>
       </div>
-
     </div>
   </section>
 
   <!-- Modal: Pedir canción -->
   <div class="modal-overlay" id="modalRequest">
     <div class="modal">
-      <h3>🎵 Pide una canción</h3>
-      <p class="modal-subtitle">El DJ recibirá tu petición al instante</p>
-      <input class="neon-input" id="inputSong" type="text" placeholder="Nombre de la canción..." />
+      <div class="modal-header">
+        <span class="modal-icon">🎵</span>
+        <div>
+          <h3>Pide una canción</h3>
+          <p class="modal-subtitle">El DJ recibirá tu petición al instante</p>
+        </div>
+      </div>
+      <hr class="highlight-divider" />
+      <label class="input-label">Nombre de la canción</label>
+      <input class="neon-input" id="inputSong" type="text" placeholder="ej. Blinding Lights..." />
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeModal('modalRequest')">Cancelar</button>
-        <button class="btn-neon" id="btnSendRequest">Enviar</button>
+        <button class="btn-neon" id="btnSendRequest">Enviar petición</button>
       </div>
     </div>
   </div>
@@ -110,12 +227,22 @@
   <!-- Modal: Dedicatoria -->
   <div class="modal-overlay" id="modalDedi">
     <div class="modal">
-      <h3>💜 Dedicar una canción</h3>
-      <p class="modal-subtitle">Tu dedicatoria aparecerá en pantalla</p>
-      <input class="neon-input" id="inputDediSong" type="text" placeholder="Canción..." />
-      <input class="neon-input" id="inputDediFrom" type="text" placeholder="De: tu nombre..." />
-      <input class="neon-input" id="inputDediTo" type="text" placeholder="Para: nombre del destinatario..." />
-      <textarea class="neon-input" id="inputDediMsg" placeholder="Mensaje (opcional)..." rows="3"></textarea>
+      <div class="modal-header">
+        <span class="modal-icon">💜</span>
+        <div>
+          <h3>Dedicar una canción</h3>
+          <p class="modal-subtitle">Tu dedicatoria aparecerá en pantalla</p>
+        </div>
+      </div>
+      <hr class="highlight-divider" />
+      <label class="input-label">Canción</label>
+      <input class="neon-input" id="inputDediSong" type="text" placeholder="Nombre de la canción..." />
+      <label class="input-label">De</label>
+      <input class="neon-input" id="inputDediFrom" type="text" placeholder="Tu nombre..." />
+      <label class="input-label">Para</label>
+      <input class="neon-input" id="inputDediTo" type="text" placeholder="Nombre del destinatario..." />
+      <label class="input-label">Mensaje <span class="label-optional">(opcional)</span></label>
+      <textarea class="neon-input" id="inputDediMsg" placeholder="Escribe tu mensaje..." rows="3"></textarea>
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeModal('modalDedi')">Cancelar</button>
         <button class="btn-neon" id="btnSendDedi">Enviar dedicatoria</button>
@@ -125,24 +252,33 @@
 
   <!-- Modal: Mesa VIP -->
   <div class="modal-overlay" id="modalVip">
-    <div class="modal">
-      <h3>👑 Reserva Mesa VIP</h3>
-      <p class="modal-subtitle">Incluye botella de tu elección</p>
-      <hr class="highlight-divider" />
-      <input class="neon-input" id="inputVipName" type="text" placeholder="Tu nombre..." />
-      <input class="neon-input" id="inputVipGuests" type="number" placeholder="Número de personas..." min="1" max="20" />
+    <div class="modal modal-vip">
+      <div class="modal-header">
+        <span class="modal-icon">👑</span>
+        <div>
+          <h3>Mesa VIP + Botella</h3>
+          <p class="modal-subtitle">Reserva exclusiva — incluye botella gratis</p>
+        </div>
+      </div>
+      <hr class="highlight-divider gold-divider" />
+      <label class="input-label">Tu nombre</label>
+      <input class="neon-input" id="inputVipName" type="text" placeholder="Nombre completo..." />
+      <label class="input-label">Número de personas</label>
+      <input class="neon-input" id="inputVipGuests" type="number" placeholder="¿Cuántos sois?" min="1" max="20" />
+      <label class="input-label">Botella de regalo</label>
       <select class="neon-input" id="inputVipBottle">
-        <option value="" disabled selected>Elige tu botella de regalo...</option>
+        <option value="" disabled selected>Elige tu botella...</option>
         <option value="Moët & Chandon">🥂 Moët &amp; Chandon</option>
         <option value="Absolut Vodka">🍶 Absolut Vodka</option>
         <option value="Bacardi Añejo">🥃 Bacardi Añejo</option>
         <option value="Hendrick's Gin">🍸 Hendrick's Gin</option>
         <option value="Jack Daniel's">🥃 Jack Daniel's</option>
       </select>
-      <textarea class="neon-input" id="inputVipNotes" placeholder="Preferencias o notas especiales..." rows="2"></textarea>
+      <label class="input-label">Notas <span class="label-optional">(opcional)</span></label>
+      <textarea class="neon-input" id="inputVipNotes" placeholder="Preferencias especiales..." rows="2"></textarea>
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeModal('modalVip')">Cancelar</button>
-        <button class="btn-neon" id="btnSendVip">Reservar mesa VIP</button>
+        <button class="btn-neon btn-gold" id="btnSendVip">Reservar Mesa VIP</button>
       </div>
     </div>
   </div>
@@ -151,29 +287,31 @@
   <nav class="bottom-nav" id="bottomNav">
     <div class="bottom-nav-inner">
       <button class="bnav-btn active" data-tab="menu">
-        <span class="bnav-icon">🍹</span>
-        <span>Carta</span>
+        <span class="bnav-icon">🍹</span><span>Carta</span>
       </button>
       <button class="bnav-btn" data-tab="pedido">
-        <span class="bnav-icon">🛒</span>
-        <span>Pedido</span>
+        <span class="bnav-icon">🛒</span><span>Pedido</span>
       </button>
       <button class="bnav-btn" data-tab="estado">
-        <span class="bnav-icon">⏱</span>
-        <span>Estado</span>
+        <span class="bnav-icon">⏱</span><span>Estado</span>
       </button>
       <button class="bnav-btn" data-tab="dj">
-        <span class="bnav-icon">🎧</span>
-        <span>DJ</span>
+        <span class="bnav-icon">🎧</span><span>DJ</span>
       </button>
     </div>
   </nav>
 
-  <!-- Cart footer: always visible -->
+  <!-- Cart footer -->
   <div class="cart-footer" id="cartFooter">
-    <div class="total-box">Total: <span id="totalDisplay">0.00 €</span></div>
-    <button class="btn-neon" id="btnConfirm">Confirmar pedido</button>
+    <div class="cart-footer-left">
+      <div class="total-box">Total: <span id="totalDisplay">0.00 €</span></div>
+      <div class="cart-footer-count"><span id="cartFooterCount">0</span> bebidas</div>
+    </div>
+    <button class="btn-neon" id="btnConfirm">Confirmar pedido →</button>
   </div>
+
+  <!-- Unlock flash -->
+  <div class="unlock-flash" id="unlockFlash"></div>
 
   <!-- Banner -->
   <div class="banner" id="banner"></div>
@@ -183,5 +321,4 @@
 
   <script src="app.js"></script>
 </body>
-
 </html>
