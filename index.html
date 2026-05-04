@@ -8,211 +8,283 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <span class="logo-dot"></span>
-      Sound<span class="logo-accent">Link</span>
-    </div>
-    <div class="header-right">
-      <div class="cart-chip" id="cartChip">
-        <span class="cart-chip-icon">🛒</span>
-        <span id="cartCount">0</span>
-        <span class="cart-chip-sep">·</span>
-        <span id="cartTotal">0.00</span> €
+  <div class="app-shell">
+
+    <!-- ══ SIDEBAR (desktop) ══ -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-dot"></span>
+        Sound<span class="logo-accent">Link</span>
       </div>
-      <div class="spent-pill">
-        <span class="spent-dot"></span>
-        <span id="spentDisplay">0.00</span> € gastados
-      </div>
-    </div>
-  </header>
 
-  <!-- Rewards strip (always visible) -->
-  <div class="rewards-strip" id="rewardsStrip">
-    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
-      <span class="rstrip-icon">🎵</span>
-      <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip1"></div></div>
-      <span class="rstrip-label">20€</span>
-    </button>
-    <div class="rstrip-divider"></div>
-    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
-      <span class="rstrip-icon">💜</span>
-      <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip2"></div></div>
-      <span class="rstrip-label">50€</span>
-    </button>
-    <div class="rstrip-divider"></div>
-    <button class="rstrip-item" data-tab="dj" onclick="switchTab('dj')">
-      <span class="rstrip-icon">👑</span>
-      <div class="rstrip-bar"><div class="rstrip-fill gold" id="rstrip3"></div></div>
-      <span class="rstrip-label">100€</span>
-    </button>
-  </div>
+      <nav class="sidebar-nav">
+        <button class="snav-item active" data-tab="menu">
+          <span class="snav-icon">🍹</span>
+          <span>Carta</span>
+        </button>
+        <button class="snav-item" data-tab="pedido">
+          <span class="snav-icon">🛒</span>
+          <span>Mi Pedido</span>
+          <span class="snav-badge" id="snavBadge" style="display:none">0</span>
+        </button>
+        <button class="snav-item" data-tab="estado">
+          <span class="snav-icon">⏱</span>
+          <span>Estado</span>
+        </button>
+        <button class="snav-item" data-tab="dj">
+          <span class="snav-icon">🎧</span>
+          <span>DJ &amp; Rewards</span>
+        </button>
+      </nav>
 
-  <!-- Main tabs (desktop) -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="menu">Carta</button>
-    <button class="tab" data-tab="pedido">Mi Pedido</button>
-    <button class="tab" data-tab="estado">Estado</button>
-    <button class="tab" data-tab="dj">DJ &amp; Rewards</button>
-  </nav>
+      <div class="sidebar-divider"></div>
 
-  <!-- TAB: Carta -->
-  <section class="tab-content active" id="tab-menu">
-    <!-- Hero -->
-    <div class="hero">
-      <p class="hero-eyebrow">Bienvenido a</p>
-      <h1 class="hero-title">Sound<span class="hero-accent">Link</span></h1>
-      <p class="hero-sub">Pide tu bebida y gana recompensas exclusivas</p>
-      <div class="hero-divider"></div>
-    </div>
-    <h2 class="section-title">Elige tu bebida</h2>
-    <div class="drink-grid" id="drinkGrid"></div>
-  </section>
-
-  <!-- TAB: Mi Pedido -->
-  <section class="tab-content" id="tab-pedido">
-    <h2 class="section-title">Tu pedido</h2>
-    <div id="cartItems" class="cart-list"></div>
-  </section>
-
-  <!-- TAB: Estado -->
-  <section class="tab-content" id="tab-estado">
-    <h2 class="section-title">Estado de tu pedido</h2>
-    <div id="orderStatus" class="status-container">
-      <div class="empty-state">
-        <div class="empty-icon">🍹</div>
-        <p class="empty-title">Sin pedidos activos</p>
-        <p class="empty-sub">Ve a la Carta y confirma tu pedido</p>
-        <button class="btn-ghost" onclick="switchTab('menu')">Ver carta</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB: DJ & Rewards -->
-  <section class="tab-content" id="tab-dj">
-    <h2 class="section-title">DJ &amp; Rewards</h2>
-
-    <!-- Tier overview -->
-    <div class="tier-overview">
-      <div class="tier-spent-display">
-        <span class="tier-spent-num" id="tierSpentNum">0.00</span>
-        <span class="tier-spent-label">€ gastados en total</span>
-      </div>
-      <div class="tier-track">
-        <div class="tier-node" id="tierNode1">
-          <div class="tier-node-dot"></div>
-          <span>20€</span>
-        </div>
-        <div class="tier-line"><div class="tier-line-fill" id="tierLineFill1"></div></div>
-        <div class="tier-node" id="tierNode2">
-          <div class="tier-node-dot"></div>
-          <span>50€</span>
-        </div>
-        <div class="tier-line"><div class="tier-line-fill" id="tierLineFill2"></div></div>
-        <div class="tier-node" id="tierNode3">
-          <div class="tier-node-dot"></div>
-          <span>100€</span>
-        </div>
-      </div>
-    </div>
-
-    <hr class="section-divider" />
-
-    <div class="dj-zone">
-      <!-- 20€: Pedir canción -->
-      <div class="dj-card" id="djRequestCard">
-        <div class="dj-card-inner">
-          <div class="dj-card-left">
-            <div class="dj-tier-badge tier-bronze">TIER 1</div>
-            <span class="dj-icon-sm">🎵</span>
-            <div>
-              <h3>Pedir una canción</h3>
-              <p>El DJ toca lo que quieras</p>
-            </div>
+      <!-- Rewards progress in sidebar -->
+      <div class="sidebar-rewards">
+        <p class="sidebar-section-label">Rewards</p>
+        <div class="sreward-item">
+          <div class="sreward-header">
+            <span>🎵 Pedir canción</span>
+            <span class="sreward-val" id="srewardVal1">0 / 20 €</span>
           </div>
-          <div class="dj-card-right">
-            <div class="dj-progress-ring" id="ringRequest">
-              <svg viewBox="0 0 44 44">
-                <circle cx="22" cy="22" r="18" class="ring-bg"/>
-                <circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill1"/>
-              </svg>
-              <span class="ring-label" id="ringLabel1">0%</span>
-            </div>
+          <div class="sreward-bar"><div class="sreward-fill" id="srewardFill1"></div></div>
+        </div>
+        <div class="sreward-item">
+          <div class="sreward-header">
+            <span>💜 Dedicatoria</span>
+            <span class="sreward-val" id="srewardVal2">0 / 50 €</span>
+          </div>
+          <div class="sreward-bar"><div class="sreward-fill" id="srewardFill2"></div></div>
+        </div>
+        <div class="sreward-item">
+          <div class="sreward-header">
+            <span>👑 Mesa VIP</span>
+            <span class="sreward-val gold-text" id="srewardVal3">0 / 100 €</span>
+          </div>
+          <div class="sreward-bar"><div class="sreward-fill gold" id="srewardFill3"></div></div>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Cart summary in sidebar -->
+      <div class="sidebar-cart" id="sidebarCart">
+        <p class="sidebar-section-label">Tu pedido</p>
+        <div class="sidebar-cart-empty" id="sidebarCartEmpty">
+          <span class="sidebar-cart-hint">Añade bebidas desde la Carta</span>
+        </div>
+        <div class="sidebar-cart-items" id="sidebarCartItems"></div>
+        <div class="sidebar-cart-footer" id="sidebarCartFooter" style="display:none">
+          <div class="sidebar-total">
+            Total <span id="sidebarTotal">0.00 €</span>
+          </div>
+          <button class="btn-neon sidebar-confirm" id="btnConfirmSide">Confirmar pedido →</button>
+        </div>
+      </div>
+
+      <!-- Spent counter at bottom -->
+      <div class="sidebar-bottom">
+        <div class="sidebar-spent">
+          <span class="spent-dot"></span>
+          <span id="sidebarSpent">0.00</span> € gastados
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══ MAIN AREA ══ -->
+    <div class="main-area">
+
+      <!-- Mobile header -->
+      <header class="topbar">
+        <div class="logo">
+          <span class="logo-dot"></span>
+          Sound<span class="logo-accent">Link</span>
+        </div>
+        <div class="header-right">
+          <div class="cart-chip" id="cartChip">
+            <span class="cart-chip-icon">🛒</span>
+            <span id="cartCount">0</span>
+            <span class="cart-chip-sep">·</span>
+            <span id="cartTotal">0.00</span> €
+          </div>
+          <div class="spent-pill">
+            <span class="spent-dot"></span>
+            <span id="spentDisplay">0.00</span> € gastados
           </div>
         </div>
-        <div class="dj-card-footer">
-          <span class="dj-progress-label" id="labelRequest">0.00 / 20 €</span>
-          <button class="btn-neon locked" id="btnRequest" disabled>Bloqueado</button>
+      </header>
+
+      <!-- Mobile rewards strip -->
+      <div class="rewards-strip">
+        <button class="rstrip-item" onclick="switchTab('dj')">
+          <span class="rstrip-icon">🎵</span>
+          <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip1"></div></div>
+          <span class="rstrip-label">20€</span>
+        </button>
+        <div class="rstrip-divider"></div>
+        <button class="rstrip-item" onclick="switchTab('dj')">
+          <span class="rstrip-icon">💜</span>
+          <div class="rstrip-bar"><div class="rstrip-fill" id="rstrip2"></div></div>
+          <span class="rstrip-label">50€</span>
+        </button>
+        <div class="rstrip-divider"></div>
+        <button class="rstrip-item" onclick="switchTab('dj')">
+          <span class="rstrip-icon">👑</span>
+          <div class="rstrip-bar"><div class="rstrip-fill gold" id="rstrip3"></div></div>
+          <span class="rstrip-label">100€</span>
+        </button>
+      </div>
+
+      <!-- Desktop page header -->
+      <div class="page-header" id="pageHeader">
+        <div class="page-header-inner">
+          <h1 class="page-title" id="pageTitle">Carta</h1>
+          <p class="page-subtitle" id="pageSubtitle">Elige tu bebida favorita</p>
+        </div>
+        <div class="page-header-meta">
+          <div class="spent-chip">
+            <span class="spent-dot"></span>
+            <span id="spentDisplay2">0.00</span> € gastados
+          </div>
         </div>
       </div>
 
-      <!-- 50€: Dedicatoria -->
-      <div class="dj-card" id="djDediCard">
-        <div class="dj-card-inner">
-          <div class="dj-card-left">
-            <div class="dj-tier-badge tier-silver">TIER 2</div>
-            <span class="dj-icon-sm">💜</span>
-            <div>
-              <h3>Dedicar una canción</h3>
-              <p>Aparece en la pantalla del bar</p>
-            </div>
-          </div>
-          <div class="dj-card-right">
-            <div class="dj-progress-ring" id="ringDedi">
-              <svg viewBox="0 0 44 44">
-                <circle cx="22" cy="22" r="18" class="ring-bg"/>
-                <circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill2"/>
-              </svg>
-              <span class="ring-label" id="ringLabel2">0%</span>
-            </div>
-          </div>
-        </div>
-        <div class="dj-card-footer">
-          <span class="dj-progress-label" id="labelDedi">0.00 / 50 €</span>
-          <button class="btn-neon locked" id="btnDedi" disabled>Bloqueado</button>
-        </div>
-      </div>
+      <!-- Mobile tabs -->
+      <nav class="tabs">
+        <button class="tab active" data-tab="menu">Carta</button>
+        <button class="tab" data-tab="pedido">Mi Pedido</button>
+        <button class="tab" data-tab="estado">Estado</button>
+        <button class="tab" data-tab="dj">DJ &amp; Rewards</button>
+      </nav>
 
-      <!-- 100€: Mesa VIP -->
-      <div class="dj-card reward-vip" id="djVipCard">
-        <div class="vip-shimmer"></div>
-        <div class="dj-card-inner">
-          <div class="dj-card-left">
-            <div class="dj-tier-badge tier-gold">TIER 3</div>
-            <span class="dj-icon-sm">👑</span>
-            <div>
-              <h3>Mesa VIP + Botella</h3>
-              <p>Reserva exclusiva con botella</p>
-            </div>
-          </div>
-          <div class="dj-card-right">
-            <div class="dj-progress-ring gold-ring" id="ringVip">
-              <svg viewBox="0 0 44 44">
-                <circle cx="22" cy="22" r="18" class="ring-bg"/>
-                <circle cx="22" cy="22" r="18" class="ring-fill gold-fill" id="ringFill3"/>
-              </svg>
-              <span class="ring-label" id="ringLabel3">0%</span>
-            </div>
-          </div>
-        </div>
-        <div class="dj-card-footer">
-          <span class="dj-progress-label" id="labelVip">0.00 / 100 €</span>
-          <button class="btn-neon locked" id="btnVip" disabled>Bloqueado</button>
-        </div>
-      </div>
-    </div>
-  </section>
+      <!-- Content -->
+      <div class="content-wrap">
 
-  <!-- Modal: Pedir canción -->
+        <!-- TAB: Carta -->
+        <section class="tab-content active" id="tab-menu">
+          <div class="drink-grid" id="drinkGrid"></div>
+        </section>
+
+        <!-- TAB: Mi Pedido (mobile only — desktop uses sidebar) -->
+        <section class="tab-content" id="tab-pedido">
+          <div class="mobile-cart-wrap">
+            <div id="cartItems" class="cart-list"></div>
+            <div class="mobile-cart-summary" id="mobileCartSummary" style="display:none">
+              <div class="mobile-summary-row">
+                <span>Total</span>
+                <span id="totalDisplay">0.00 €</span>
+              </div>
+              <button class="btn-neon" id="btnConfirm" style="width:100%">Confirmar pedido →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Estado -->
+        <section class="tab-content" id="tab-estado">
+          <div id="orderStatus" class="status-container">
+            <div class="empty-state">
+              <div class="empty-icon">🍹</div>
+              <p class="empty-title">Sin pedidos activos</p>
+              <p class="empty-sub">Ve a la Carta y confirma tu pedido</p>
+              <button class="btn-ghost" onclick="switchTab('menu')">Ver carta</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: DJ & Rewards -->
+        <section class="tab-content" id="tab-dj">
+          <div class="tier-overview">
+            <div class="tier-spent-display">
+              <span class="tier-spent-num" id="tierSpentNum">0.00</span>
+              <span class="tier-spent-label">€ gastados en total</span>
+            </div>
+            <div class="tier-track">
+              <div class="tier-node" id="tierNode1"><div class="tier-node-dot"></div><span>20€</span></div>
+              <div class="tier-line"><div class="tier-line-fill" id="tierLineFill1"></div></div>
+              <div class="tier-node" id="tierNode2"><div class="tier-node-dot"></div><span>50€</span></div>
+              <div class="tier-line"><div class="tier-line-fill" id="tierLineFill2"></div></div>
+              <div class="tier-node" id="tierNode3"><div class="tier-node-dot"></div><span>100€</span></div>
+            </div>
+          </div>
+          <div class="dj-zone">
+            <!-- Tier 1 -->
+            <div class="dj-card" id="djRequestCard">
+              <div class="vip-shimmer tier1-shimmer"></div>
+              <div class="dj-tier-badge tier-bronze">TIER 1</div>
+              <div class="dj-card-top">
+                <div class="dj-ring-wrap">
+                  <div class="dj-progress-ring">
+                    <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="ring-bg"/><circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill1"/></svg>
+                    <span class="ring-label" id="ringLabel1">0%</span>
+                  </div>
+                </div>
+                <div class="dj-card-info">
+                  <span class="dj-icon-sm">🎵</span>
+                  <h3>Pedir una canción</h3>
+                  <p>El DJ toca lo que quieras al instante</p>
+                </div>
+              </div>
+              <div class="dj-card-footer">
+                <span class="dj-progress-label" id="labelRequest">0.00 / 20 €</span>
+                <button class="btn-neon locked" id="btnRequest" disabled>Bloqueado</button>
+              </div>
+            </div>
+            <!-- Tier 2 -->
+            <div class="dj-card" id="djDediCard">
+              <div class="dj-tier-badge tier-silver">TIER 2</div>
+              <div class="dj-card-top">
+                <div class="dj-ring-wrap">
+                  <div class="dj-progress-ring">
+                    <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="ring-bg"/><circle cx="22" cy="22" r="18" class="ring-fill" id="ringFill2"/></svg>
+                    <span class="ring-label" id="ringLabel2">0%</span>
+                  </div>
+                </div>
+                <div class="dj-card-info">
+                  <span class="dj-icon-sm">💜</span>
+                  <h3>Dedicar una canción</h3>
+                  <p>Aparece en la pantalla del bar</p>
+                </div>
+              </div>
+              <div class="dj-card-footer">
+                <span class="dj-progress-label" id="labelDedi">0.00 / 50 €</span>
+                <button class="btn-neon locked" id="btnDedi" disabled>Bloqueado</button>
+              </div>
+            </div>
+            <!-- Tier 3 -->
+            <div class="dj-card reward-vip" id="djVipCard">
+              <div class="vip-shimmer"></div>
+              <div class="dj-tier-badge tier-gold">TIER 3</div>
+              <div class="dj-card-top">
+                <div class="dj-ring-wrap">
+                  <div class="dj-progress-ring">
+                    <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="ring-bg"/><circle cx="22" cy="22" r="18" class="ring-fill gold-fill" id="ringFill3"/></svg>
+                    <span class="ring-label" id="ringLabel3">0%</span>
+                  </div>
+                </div>
+                <div class="dj-card-info">
+                  <span class="dj-icon-sm">👑</span>
+                  <h3>Mesa VIP + Botella</h3>
+                  <p>Reserva exclusiva con botella gratis</p>
+                </div>
+              </div>
+              <div class="dj-card-footer">
+                <span class="dj-progress-label" id="labelVip">0.00 / 100 €</span>
+                <button class="btn-neon locked" id="btnVip" disabled>Bloqueado</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /content-wrap -->
+    </div><!-- /main-area -->
+  </div><!-- /app-shell -->
+
+  <!-- Modals -->
   <div class="modal-overlay" id="modalRequest">
     <div class="modal">
       <div class="modal-header">
         <span class="modal-icon">🎵</span>
-        <div>
-          <h3>Pide una canción</h3>
-          <p class="modal-subtitle">El DJ recibirá tu petición al instante</p>
-        </div>
+        <div><h3>Pide una canción</h3><p class="modal-subtitle">El DJ recibirá tu petición al instante</p></div>
       </div>
       <hr class="highlight-divider" />
       <label class="input-label">Nombre de la canción</label>
@@ -224,15 +296,11 @@
     </div>
   </div>
 
-  <!-- Modal: Dedicatoria -->
   <div class="modal-overlay" id="modalDedi">
     <div class="modal">
       <div class="modal-header">
         <span class="modal-icon">💜</span>
-        <div>
-          <h3>Dedicar una canción</h3>
-          <p class="modal-subtitle">Tu dedicatoria aparecerá en pantalla</p>
-        </div>
+        <div><h3>Dedicar una canción</h3><p class="modal-subtitle">Tu dedicatoria aparecerá en pantalla</p></div>
       </div>
       <hr class="highlight-divider" />
       <label class="input-label">Canción</label>
@@ -250,15 +318,11 @@
     </div>
   </div>
 
-  <!-- Modal: Mesa VIP -->
   <div class="modal-overlay" id="modalVip">
     <div class="modal modal-vip">
       <div class="modal-header">
         <span class="modal-icon">👑</span>
-        <div>
-          <h3>Mesa VIP + Botella</h3>
-          <p class="modal-subtitle">Reserva exclusiva — incluye botella gratis</p>
-        </div>
+        <div><h3>Mesa VIP + Botella</h3><p class="modal-subtitle">Reserva exclusiva — botella gratis incluida</p></div>
       </div>
       <hr class="highlight-divider gold-divider" />
       <label class="input-label">Tu nombre</label>
@@ -268,11 +332,11 @@
       <label class="input-label">Botella de regalo</label>
       <select class="neon-input" id="inputVipBottle">
         <option value="" disabled selected>Elige tu botella...</option>
-        <option value="Moët & Chandon">🥂 Moët &amp; Chandon</option>
-        <option value="Absolut Vodka">🍶 Absolut Vodka</option>
-        <option value="Bacardi Añejo">🥃 Bacardi Añejo</option>
-        <option value="Hendrick's Gin">🍸 Hendrick's Gin</option>
-        <option value="Jack Daniel's">🥃 Jack Daniel's</option>
+        <option>🥂 Moët &amp; Chandon</option>
+        <option>🍶 Absolut Vodka</option>
+        <option>🥃 Bacardi Añejo</option>
+        <option>🍸 Hendrick's Gin</option>
+        <option>🥃 Jack Daniel's</option>
       </select>
       <label class="input-label">Notas <span class="label-optional">(opcional)</span></label>
       <textarea class="neon-input" id="inputVipNotes" placeholder="Preferencias especiales..." rows="2"></textarea>
@@ -283,40 +347,27 @@
     </div>
   </div>
 
-  <!-- Bottom Navigation (móvil) -->
+  <!-- Mobile bottom nav -->
   <nav class="bottom-nav" id="bottomNav">
     <div class="bottom-nav-inner">
-      <button class="bnav-btn active" data-tab="menu">
-        <span class="bnav-icon">🍹</span><span>Carta</span>
-      </button>
-      <button class="bnav-btn" data-tab="pedido">
-        <span class="bnav-icon">🛒</span><span>Pedido</span>
-      </button>
-      <button class="bnav-btn" data-tab="estado">
-        <span class="bnav-icon">⏱</span><span>Estado</span>
-      </button>
-      <button class="bnav-btn" data-tab="dj">
-        <span class="bnav-icon">🎧</span><span>DJ</span>
-      </button>
+      <button class="bnav-btn active" data-tab="menu"><span class="bnav-icon">🍹</span><span>Carta</span></button>
+      <button class="bnav-btn" data-tab="pedido"><span class="bnav-icon">🛒</span><span>Pedido</span></button>
+      <button class="bnav-btn" data-tab="estado"><span class="bnav-icon">⏱</span><span>Estado</span></button>
+      <button class="bnav-btn" data-tab="dj"><span class="bnav-icon">🎧</span><span>DJ</span></button>
     </div>
   </nav>
 
-  <!-- Cart footer -->
+  <!-- Mobile cart footer -->
   <div class="cart-footer" id="cartFooter">
     <div class="cart-footer-left">
-      <div class="total-box">Total: <span id="totalDisplay">0.00 €</span></div>
+      <div class="total-box">Total: <span id="totalDisplayMobile">0.00 €</span></div>
       <div class="cart-footer-count"><span id="cartFooterCount">0</span> bebidas</div>
     </div>
-    <button class="btn-neon" id="btnConfirm">Confirmar pedido →</button>
+    <button class="btn-neon" id="btnConfirmMobile">Confirmar →</button>
   </div>
 
-  <!-- Unlock flash -->
   <div class="unlock-flash" id="unlockFlash"></div>
-
-  <!-- Banner -->
   <div class="banner" id="banner"></div>
-
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script src="app.js"></script>

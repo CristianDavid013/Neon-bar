@@ -16,7 +16,7 @@ const UNLOCK_REQUEST = 20;
 const UNLOCK_DEDI    = 50;
 const UNLOCK_VIP     = 100;
 const READY_MS       = 6 * 60 * 1000;
-const RING_CIRC      = 113.1; // 2π × 18
+const RING_CIRC      = 113.1;
 
 // ── State ──────────────────────────────────────────────
 let cart       = {};
@@ -24,73 +24,105 @@ let totalSpent = 0;
 let orderList  = [];
 let unlockedTiers = { t1: false, t2: false, t3: false };
 
+// ── Page meta ─────────────────────────────────────────
+const PAGE_META = {
+  menu:   { title: 'Carta',          subtitle: 'Elige tu bebida favorita' },
+  pedido: { title: 'Mi Pedido',      subtitle: 'Revisa y confirma tu pedido' },
+  estado: { title: 'Estado',         subtitle: 'Sigue el progreso de tu pedido' },
+  dj:     { title: 'DJ & Rewards',   subtitle: 'Desbloquea recompensas exclusivas' },
+};
+
 // ── DOM refs ──────────────────────────────────────────
-const drinkGrid        = document.getElementById('drinkGrid');
-const cartItemsEl      = document.getElementById('cartItems');
-const cartCountEl      = document.getElementById('cartCount');
-const cartTotalEl      = document.getElementById('cartTotal');
-const totalDisplayEl   = document.getElementById('totalDisplay');
-const cartFooterCountEl= document.getElementById('cartFooterCount');
-const btnConfirm       = document.getElementById('btnConfirm');
-const cartFooterEl     = document.getElementById('cartFooter');
-const cartChipEl       = document.getElementById('cartChip');
-const orderStatusEl    = document.getElementById('orderStatus');
-const spentDisplayEl   = document.getElementById('spentDisplay');
-const tierSpentEl      = document.getElementById('tierSpentNum');
-const btnRequest       = document.getElementById('btnRequest');
-const btnDedi          = document.getElementById('btnDedi');
-const btnVip           = document.getElementById('btnVip');
-const toast            = document.getElementById('toast');
-const banner           = document.getElementById('banner');
-const unlockFlash      = document.getElementById('unlockFlash');
+const drinkGrid          = document.getElementById('drinkGrid');
+const cartItemsEl        = document.getElementById('cartItems');
+const cartCountEl        = document.getElementById('cartCount');
+const cartTotalEl        = document.getElementById('cartTotal');
+const cartChipEl         = document.getElementById('cartChip');
+const cartFooterEl       = document.getElementById('cartFooter');
+const cartFooterCountEl  = document.getElementById('cartFooterCount');
+const totalDisplayMobile = document.getElementById('totalDisplayMobile');
+const btnConfirmMobile   = document.getElementById('btnConfirmMobile');
+const orderStatusEl      = document.getElementById('orderStatus');
+const spentDisplayEl     = document.getElementById('spentDisplay');
+const spentDisplay2El    = document.getElementById('spentDisplay2');
+const tierSpentEl        = document.getElementById('tierSpentNum');
+const btnRequest         = document.getElementById('btnRequest');
+const btnDedi            = document.getElementById('btnDedi');
+const btnVip             = document.getElementById('btnVip');
+const toast              = document.getElementById('toast');
+const banner             = document.getElementById('banner');
+const unlockFlash        = document.getElementById('unlockFlash');
+const pageTitle          = document.getElementById('pageTitle');
+const pageSubtitle       = document.getElementById('pageSubtitle');
+const snavBadge          = document.getElementById('snavBadge');
 
-// Rings
-const ringFill1  = document.getElementById('ringFill1');
-const ringFill2  = document.getElementById('ringFill2');
-const ringFill3  = document.getElementById('ringFill3');
-const ringLabel1 = document.getElementById('ringLabel1');
-const ringLabel2 = document.getElementById('ringLabel2');
-const ringLabel3 = document.getElementById('ringLabel3');
+// Sidebar cart
+const sidebarCartEmpty  = document.getElementById('sidebarCartEmpty');
+const sidebarCartItems  = document.getElementById('sidebarCartItems');
+const sidebarCartFooter = document.getElementById('sidebarCartFooter');
+const sidebarTotal      = document.getElementById('sidebarTotal');
+const sidebarSpentEl    = document.getElementById('sidebarSpent');
+const btnConfirmSide    = document.getElementById('btnConfirmSide');
 
-// Labels
+// Mobile cart summary
+const mobileCartSummary = document.getElementById('mobileCartSummary');
+const totalDisplay      = document.getElementById('totalDisplay');
+
+// Rewards
+const ringFill1 = document.getElementById('ringFill1');
+const ringFill2 = document.getElementById('ringFill2');
+const ringFill3 = document.getElementById('ringFill3');
+const ringLabel1= document.getElementById('ringLabel1');
+const ringLabel2= document.getElementById('ringLabel2');
+const ringLabel3= document.getElementById('ringLabel3');
 const labelReq  = document.getElementById('labelRequest');
 const labelDedi = document.getElementById('labelDedi');
 const labelVip  = document.getElementById('labelVip');
-
-// Rewards strip
-const rstrip1 = document.getElementById('rstrip1');
-const rstrip2 = document.getElementById('rstrip2');
-const rstrip3 = document.getElementById('rstrip3');
-
-// Tier track
-const tierNode1     = document.getElementById('tierNode1');
-const tierNode2     = document.getElementById('tierNode2');
-const tierNode3     = document.getElementById('tierNode3');
-const tierLineFill1 = document.getElementById('tierLineFill1');
-const tierLineFill2 = document.getElementById('tierLineFill2');
+const rstrip1   = document.getElementById('rstrip1');
+const rstrip2   = document.getElementById('rstrip2');
+const rstrip3   = document.getElementById('rstrip3');
+const srewardFill1 = document.getElementById('srewardFill1');
+const srewardFill2 = document.getElementById('srewardFill2');
+const srewardFill3 = document.getElementById('srewardFill3');
+const srewardVal1  = document.getElementById('srewardVal1');
+const srewardVal2  = document.getElementById('srewardVal2');
+const srewardVal3  = document.getElementById('srewardVal3');
+const tierNode1    = document.getElementById('tierNode1');
+const tierNode2    = document.getElementById('tierNode2');
+const tierNode3    = document.getElementById('tierNode3');
+const tierLineFill1= document.getElementById('tierLineFill1');
+const tierLineFill2= document.getElementById('tierLineFill2');
 
 // ── Init ──────────────────────────────────────────────
 function init() {
   renderDrinkGrid();
   setupTabs();
   setupModals();
+  setupConfirmButtons();
   updateCart();
   updateDJZone();
 }
 
 // ── Tabs ──────────────────────────────────────────────
 function switchTab(tabName) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab, .bnav-btn, .snav-item').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
   document.querySelector(`.tab[data-tab="${tabName}"]`)?.classList.add('active');
   document.querySelector(`.bnav-btn[data-tab="${tabName}"]`)?.classList.add('active');
-  document.getElementById('tab-' + tabName).classList.add('active');
+  document.querySelector(`.snav-item[data-tab="${tabName}"]`)?.classList.add('active');
+  document.getElementById('tab-' + tabName)?.classList.add('active');
+
+  // Update desktop page header
+  const meta = PAGE_META[tabName] || {};
+  if (pageTitle)    pageTitle.textContent    = meta.title    || '';
+  if (pageSubtitle) pageSubtitle.textContent = meta.subtitle || '';
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function setupTabs() {
-  document.querySelectorAll('.tab, .bnav-btn').forEach(btn => {
+  document.querySelectorAll('.tab, .bnav-btn, .snav-item').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 }
@@ -114,12 +146,8 @@ function updateDrinkBadges() {
     const badge = document.getElementById(`badge-${d.id}`);
     if (!card || !badge) return;
     const qty = cart[d.id] || 0;
-    if (qty > 0) {
-      badge.textContent = `×${qty}`;
-      card.classList.add('in-cart');
-    } else {
-      card.classList.remove('in-cart');
-    }
+    badge.textContent = `×${qty}`;
+    card.classList.toggle('in-cart', qty > 0);
   });
 }
 
@@ -140,57 +168,94 @@ function changeQty(id, delta) {
 function updateCart() {
   const entries  = Object.entries(cart);
   const count    = entries.reduce((s, [, q]) => s + q, 0);
-  const subtotal = entries.reduce((s, [id, q]) => {
-    return s + DRINKS.find(d => d.id === Number(id)).price * q;
-  }, 0);
+  const subtotal = entries.reduce((s, [id, q]) =>
+    s + DRINKS.find(d => d.id === Number(id)).price * q, 0);
 
-  cartCountEl.textContent      = count;
-  cartTotalEl.textContent      = subtotal.toFixed(2);
-  totalDisplayEl.textContent   = subtotal.toFixed(2) + ' €';
-  cartFooterCountEl.textContent= count;
+  // Mobile header
+  if (cartCountEl) cartCountEl.textContent = count;
+  if (cartTotalEl) cartTotalEl.textContent = subtotal.toFixed(2);
+  if (cartChipEl)  cartChipEl.classList.toggle('has-items', count > 0);
 
-  cartChipEl.classList.toggle('has-items', count > 0);
-  cartFooterEl.classList.toggle('visible', count > 0);
+  // Mobile footer
+  if (cartFooterCountEl)  cartFooterCountEl.textContent  = count;
+  if (totalDisplayMobile) totalDisplayMobile.textContent = subtotal.toFixed(2) + ' €';
+  if (cartFooterEl)       cartFooterEl.classList.toggle('visible', count > 0);
+
+  // Mobile tab summary
+  if (totalDisplay) totalDisplay.textContent = subtotal.toFixed(2) + ' €';
+  if (mobileCartSummary) mobileCartSummary.style.display = count > 0 ? 'flex' : 'none';
+
+  // Sidebar nav badge
+  if (snavBadge) {
+    snavBadge.textContent = count;
+    snavBadge.style.display = count > 0 ? '' : 'none';
+  }
 
   updateDrinkBadges();
-  renderCartItems(entries);
+  renderCartItems(entries, subtotal);
 }
 
-function renderCartItems(entries) {
-  if (!entries.length) {
-    cartItemsEl.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🛒</div>
-        <p class="empty-title">Carrito vacío</p>
-        <p class="empty-sub">Ve a la Carta y añade bebidas</p>
-        <button class="btn-ghost" onclick="switchTab('menu')">Ver carta</button>
-      </div>`;
-    return;
+function renderCartItems(entries, subtotal) {
+  const empty = `
+    <div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <p class="empty-title">Carrito vacío</p>
+      <p class="empty-sub">Añade bebidas desde la Carta</p>
+      <button class="btn-ghost" onclick="switchTab('menu')">Ver carta</button>
+    </div>`;
+
+  // Mobile tab-pedido
+  if (cartItemsEl) {
+    if (!entries.length) {
+      cartItemsEl.innerHTML = empty;
+    } else {
+      cartItemsEl.innerHTML = entries.map(([id, qty]) => {
+        const d = DRINKS.find(d => d.id === Number(id));
+        return `
+          <div class="cart-item">
+            <div class="cart-item-left">
+              <span class="cart-item-emoji">${d.emoji}</span>
+              <div>
+                <div class="cart-item-name">${d.name}</div>
+                <div class="cart-item-price">${d.price.toFixed(2)} € / ud</div>
+              </div>
+            </div>
+            <div class="cart-item-controls">
+              <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>
+              <span class="qty-display">${qty}</span>
+              <button class="qty-btn" onclick="changeQty(${id},+1)">+</button>
+            </div>
+            <span class="cart-item-subtotal">${(d.price*qty).toFixed(2)} €</span>
+          </div>`;
+      }).join('');
+    }
   }
-  cartItemsEl.innerHTML = entries.map(([id, qty]) => {
-    const d = DRINKS.find(d => d.id === Number(id));
-    const sub = (d.price * qty).toFixed(2);
-    return `
-      <div class="cart-item">
-        <div class="cart-item-left">
-          <span class="cart-item-emoji">${d.emoji}</span>
-          <div>
-            <div class="cart-item-name">${d.name}</div>
-            <div class="cart-item-price">${d.price.toFixed(2)} € / ud</div>
-          </div>
-        </div>
-        <div class="cart-item-controls">
-          <button class="qty-btn" onclick="changeQty(${id}, -1)">−</button>
-          <span class="qty-display">${qty}</span>
-          <button class="qty-btn" onclick="changeQty(${id}, +1)">+</button>
-        </div>
-        <span class="cart-item-subtotal">${sub} €</span>
-      </div>`;
-  }).join('');
+
+  // Desktop sidebar cart
+  if (!sidebarCartItems) return;
+  if (!entries.length) {
+    sidebarCartEmpty.style.display  = '';
+    sidebarCartItems.innerHTML      = '';
+    sidebarCartFooter.style.display = 'none';
+  } else {
+    sidebarCartEmpty.style.display  = 'none';
+    sidebarCartFooter.style.display = '';
+    if (sidebarTotal) sidebarTotal.textContent = subtotal.toFixed(2) + ' €';
+    sidebarCartItems.innerHTML = entries.map(([id, qty]) => {
+      const d = DRINKS.find(d => d.id === Number(id));
+      return `
+        <div class="sc-item">
+          <span class="sc-emoji">${d.emoji}</span>
+          <span class="sc-name">${d.name}</span>
+          <span class="sc-qty">×${qty}</span>
+          <span class="sc-price">${(d.price*qty).toFixed(2)}€</span>
+        </div>`;
+    }).join('');
+  }
 }
 
 // ── Confirm order ─────────────────────────────────────
-btnConfirm.addEventListener('click', () => {
+function confirmOrder() {
   const entries = Object.entries(cart);
   if (!entries.length) { showToast('Añade bebidas primero'); return; }
 
@@ -202,7 +267,7 @@ btnConfirm.addEventListener('click', () => {
   entries.forEach(([id, qty]) => {
     const d = DRINKS.find(d => d.id === Number(id));
     for (let i = 0; i < qty; i++) {
-      const order = { id: Date.now() + Math.random(), drink: d, status: 'preparing', readyAt };
+      const order = { drink: d, status: 'preparing', readyAt };
       orderList.push(order);
       setTimeout(() => {
         order.status = 'ready';
@@ -213,15 +278,30 @@ btnConfirm.addEventListener('click', () => {
   });
 
   totalSpent += subtotal;
-  spentDisplayEl.textContent  = totalSpent.toFixed(2);
-  tierSpentEl.textContent     = totalSpent.toFixed(2);
+  updateSpentDisplay();
   cart = {};
   updateCart();
   updateDJZone();
   renderOrderStatus();
   showBanner('✅ Pedido confirmado · 🕐 Listas en 6 minutos en la barra');
   switchTab('estado');
-});
+}
+
+function setupConfirmButtons() {
+  if (btnConfirmMobile) btnConfirmMobile.addEventListener('click', confirmOrder);
+  if (btnConfirmSide)   btnConfirmSide.addEventListener('click', confirmOrder);
+  // Legacy mobile tab button
+  const btnConfirm = document.getElementById('btnConfirm');
+  if (btnConfirm) btnConfirm.addEventListener('click', confirmOrder);
+}
+
+function updateSpentDisplay() {
+  const val = totalSpent.toFixed(2);
+  if (spentDisplayEl)  spentDisplayEl.textContent  = val;
+  if (spentDisplay2El) spentDisplay2El.textContent = val;
+  if (tierSpentEl)     tierSpentEl.textContent     = val;
+  if (sidebarSpentEl)  sidebarSpentEl.textContent  = val;
+}
 
 // ── Order status ──────────────────────────────────────
 function formatCountdown(ms) {
@@ -244,17 +324,16 @@ function renderOrderStatus() {
   }
   const now = Date.now();
   orderStatusEl.innerHTML = orderList.map(o => {
-    const remaining = o.readyAt - now;
-    const countdown = o.status === 'ready' ? '' :
-      `<span class="countdown">${formatCountdown(remaining)}</span>`;
+    const rem = o.readyAt - now;
+    const cd  = o.status === 'ready' ? '' : `<span class="countdown">${formatCountdown(rem)}</span>`;
     return `
-      <div class="status-card${o.status === 'ready' ? ' is-ready' : ''}">
+      <div class="status-card${o.status==='ready'?' is-ready':''}">
         <div class="status-icon">${o.drink.emoji}</div>
         <div class="status-info">
           <div class="status-drink-name">${o.drink.name}</div>
-          ${o.status === 'ready'
+          ${o.status==='ready'
             ? '<span class="status-badge badge-ready">✓ Lista para recoger</span>'
-            : `<span class="status-badge badge-preparing">⏳ En preparación</span>${countdown}`}
+            : `<span class="status-badge badge-preparing">⏳ En preparación</span>${cd}`}
         </div>
       </div>`;
   }).join('');
@@ -266,82 +345,75 @@ setInterval(() => {
 
 // ── DJ Zone ──────────────────────────────────────────
 function setRing(fillEl, labelEl, pct) {
-  const offset = RING_CIRC * (1 - pct / 100);
-  fillEl.style.strokeDashoffset = offset;
+  fillEl.style.strokeDashoffset = RING_CIRC * (1 - pct / 100);
   labelEl.textContent = Math.round(pct) + '%';
 }
 
 function updateDJZone() {
-  const pct1 = Math.min(totalSpent / UNLOCK_REQUEST * 100, 100);
-  const pct2 = Math.min(totalSpent / UNLOCK_DEDI    * 100, 100);
-  const pct3 = Math.min(totalSpent / UNLOCK_VIP     * 100, 100);
+  const p1 = Math.min(totalSpent / UNLOCK_REQUEST * 100, 100);
+  const p2 = Math.min(totalSpent / UNLOCK_DEDI    * 100, 100);
+  const p3 = Math.min(totalSpent / UNLOCK_VIP     * 100, 100);
 
-  // Rings
-  setRing(ringFill1, ringLabel1, pct1);
-  setRing(ringFill2, ringLabel2, pct2);
-  setRing(ringFill3, ringLabel3, pct3);
+  setRing(ringFill1, ringLabel1, p1);
+  setRing(ringFill2, ringLabel2, p2);
+  setRing(ringFill3, ringLabel3, p3);
 
-  // Rewards strip
-  rstrip1.style.width = pct1 + '%';
-  rstrip2.style.width = pct2 + '%';
-  rstrip3.style.width = pct3 + '%';
+  // Mobile strip
+  if (rstrip1) rstrip1.style.width = p1 + '%';
+  if (rstrip2) rstrip2.style.width = p2 + '%';
+  if (rstrip3) rstrip3.style.width = p3 + '%';
 
-  // Tier track
-  const p12 = Math.min((totalSpent - UNLOCK_REQUEST) / (UNLOCK_DEDI - UNLOCK_REQUEST) * 100, 100);
-  const p23 = Math.min((totalSpent - UNLOCK_DEDI) / (UNLOCK_VIP - UNLOCK_DEDI) * 100, 100);
-  tierLineFill1.style.width = Math.max(0, p12) + '%';
-  tierLineFill2.style.width = Math.max(0, p23) + '%';
+  // Sidebar strip
+  if (srewardFill1) srewardFill1.style.width = p1 + '%';
+  if (srewardFill2) srewardFill2.style.width = p2 + '%';
+  if (srewardFill3) srewardFill3.style.width = p3 + '%';
+  if (srewardVal1)  srewardVal1.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_REQUEST} €`;
+  if (srewardVal2)  srewardVal2.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_DEDI} €`;
+  if (srewardVal3)  srewardVal3.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_VIP} €`;
 
   // Labels
-  labelReq.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_REQUEST} €`;
-  labelDedi.textContent = `${totalSpent.toFixed(2)} / ${UNLOCK_DEDI} €`;
-  labelVip.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_VIP} €`;
+  if (labelReq)  labelReq.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_REQUEST} €`;
+  if (labelDedi) labelDedi.textContent = `${totalSpent.toFixed(2)} / ${UNLOCK_DEDI} €`;
+  if (labelVip)  labelVip.textContent  = `${totalSpent.toFixed(2)} / ${UNLOCK_VIP} €`;
 
-  // Tier nodes
-  if (totalSpent >= UNLOCK_REQUEST) tierNode1.classList.add('active');
-  if (totalSpent >= UNLOCK_DEDI)    tierNode2.classList.add('active');
-  if (totalSpent >= UNLOCK_VIP)     tierNode3.classList.add('active');
+  // Tier track lines
+  const p12 = Math.max(0, Math.min((totalSpent - UNLOCK_REQUEST) / (UNLOCK_DEDI - UNLOCK_REQUEST) * 100, 100));
+  const p23 = Math.max(0, Math.min((totalSpent - UNLOCK_DEDI)    / (UNLOCK_VIP  - UNLOCK_DEDI)    * 100, 100));
+  if (tierLineFill1) tierLineFill1.style.width = p12 + '%';
+  if (tierLineFill2) tierLineFill2.style.width = p23 + '%';
 
-  // Tier spent display
-  if (tierSpentEl) tierSpentEl.textContent = totalSpent.toFixed(2);
+  if (totalSpent >= UNLOCK_REQUEST) tierNode1?.classList.add('active');
+  if (totalSpent >= UNLOCK_DEDI)    tierNode2?.classList.add('active');
+  if (totalSpent >= UNLOCK_VIP)     tierNode3?.classList.add('active');
 
-  // Unlock tier 1
+  // Unlock tiers
   if (totalSpent >= UNLOCK_REQUEST && !unlockedTiers.t1) {
     unlockedTiers.t1 = true;
-    btnRequest.disabled = false;
-    btnRequest.textContent = '🎵 Pedir canción';
-    btnRequest.classList.remove('locked');
-    document.getElementById('djRequestCard').classList.add('unlocked');
-    triggerUnlockFlash(false);
+    btnRequest.disabled = false; btnRequest.textContent = '🎵 Pedir canción'; btnRequest.classList.remove('locked');
+    document.getElementById('djRequestCard')?.classList.add('unlocked');
+    triggerFlash(false);
     showBanner('🎵 Desbloqueado: ¡ya puedes pedir una canción al DJ!');
   }
-  // Unlock tier 2
   if (totalSpent >= UNLOCK_DEDI && !unlockedTiers.t2) {
     unlockedTiers.t2 = true;
-    btnDedi.disabled = false;
-    btnDedi.textContent = '💜 Dedicar canción';
-    btnDedi.classList.remove('locked');
-    document.getElementById('djDediCard').classList.add('unlocked');
-    triggerUnlockFlash(false);
+    btnDedi.disabled = false; btnDedi.textContent = '💜 Dedicar canción'; btnDedi.classList.remove('locked');
+    document.getElementById('djDediCard')?.classList.add('unlocked');
+    triggerFlash(false);
     showBanner('💜 Desbloqueado: ¡ya puedes dedicar una canción!');
   }
-  // Unlock tier 3
   if (totalSpent >= UNLOCK_VIP && !unlockedTiers.t3) {
     unlockedTiers.t3 = true;
-    btnVip.disabled = false;
-    btnVip.textContent = '👑 Reservar Mesa VIP';
-    btnVip.classList.remove('locked');
-    btnVip.classList.add('btn-gold');
-    document.getElementById('djVipCard').classList.add('unlocked');
-    triggerUnlockFlash(true);
+    btnVip.disabled = false; btnVip.textContent = '👑 Reservar Mesa VIP'; btnVip.classList.remove('locked'); btnVip.classList.add('btn-gold');
+    document.getElementById('djVipCard')?.classList.add('unlocked');
+    triggerFlash(true);
     showBanner('👑 ¡DESBLOQUEADO! Mesa VIP + Botella gratis — ¡enhorabuena!');
   }
 }
 
-function triggerUnlockFlash(isGold) {
-  unlockFlash.classList.toggle('gold-flash', isGold);
+function triggerFlash(gold) {
+  unlockFlash.classList.toggle('gold-flash', gold);
   unlockFlash.classList.add('show');
-  setTimeout(() => unlockFlash.classList.remove('show'), 400);
+  setTimeout(() => unlockFlash.classList.remove('show'), 380);
 }
 
 // ── Modals ────────────────────────────────────────────
@@ -385,17 +457,13 @@ function setupModals() {
     const bottle = document.getElementById('inputVipBottle').value;
     if (!name || !guests || !bottle) { showToast('Rellena todos los campos'); return; }
     showBanner(`👑 Mesa VIP reservada para ${name} (${guests} personas)!`);
-    ['inputVipName','inputVipGuests','inputVipNotes'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
+    ['inputVipName','inputVipGuests','inputVipNotes'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('inputVipBottle').selectedIndex = 0;
     closeModal('modalVip');
   });
 
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) closeModal(overlay.id);
-    });
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
   });
 }
 
